@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import axios from "axios";
 import mailSender from "./utils/SendMail.js";
 
 dotenv.config();
@@ -30,6 +31,23 @@ app.get("/inrdeals/coupons", async (req, res) => {
         const { data } = await axios.get("https://inrdeals.com/api/v1/coupon-feed", {
             params: {
                 token: process.env.INRDEALS_COUPON_TOKEN,
+                id: process.env.INRDEALS_USERNAME,
+            },
+        });
+        res.json({ success: true, data });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch coupons",
+            error: error.response?.data || error.message,
+        });
+    }
+});
+app.get("/inrdeals/stores", async (req, res) => {
+    try {
+        const { data } = await axios.get("https://inrdeals.com/fetch/stores", {
+            params: {
+                token: process.env.INRDEALS_STORE_TOKEN,
                 id: process.env.INRDEALS_USERNAME,
             },
         });
