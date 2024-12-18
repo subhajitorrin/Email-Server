@@ -25,6 +25,24 @@ app.post("/send-email", async (req, res) => {
     }
 });
 
+app.get("/inrdeals/coupons", async (req, res) => {
+    try {
+        const { data } = await axios.get("https://inrdeals.com/api/v1/coupon-feed", {
+            params: {
+                token: process.env.INRDEALS_COUPON_TOKEN,
+                id: process.env.INRDEALS_USERNAME,
+            },
+        });
+        res.json({ success: true, data });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch coupons",
+            error: error.response?.data || error.message,
+        });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
